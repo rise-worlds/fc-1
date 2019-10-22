@@ -122,7 +122,7 @@ list(APPEND sources ${fc_headers})
 
 setup_library( fc SOURCES ${sources} LIBRARY_TYPE STATIC DONT_INSTALL_LIBRARY )
 
-find_package(Boost 1.66 REQUIRED COMPONENTS
+find_package(Boost 1.71 REQUIRED COMPONENTS
     date_time
     filesystem
     chrono
