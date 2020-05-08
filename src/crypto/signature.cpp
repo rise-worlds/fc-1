@@ -53,14 +53,15 @@ namespace fc { namespace crypto {
       });
    }
 
-   signature::operator std::string() const
+   std::string signature::to_string(const fc::yield_function_t& yield) const
    {
-      auto data_str = _storage.visit(base58str_visitor<storage_type, config::signature_prefix>());
+      auto data_str = _storage.visit(base58str_visitor<storage_type, config::signature_prefix>(yield));
+      yield();
       return std::string(config::signature_base_prefix) + "_" + data_str;
    }
 
    std::ostream& operator<<(std::ostream& s, const signature& k) {
-      s << "signature(" << std::string(k) << ')';
+      s << "signature(" << k.to_string() << ')';
       return s;
    }
 
@@ -84,9 +85,9 @@ namespace fc { namespace crypto {
 
 namespace fc
 {
-   void to_variant(const fc::crypto::signature& var, fc::variant& vo)
+   void to_variant(const fc::crypto::signature& var, fc::variant& vo, const fc::yield_function_t& yield)
    {
-      vo = string(var);
+      vo = var.to_string(yield);
    }
 
    void from_variant(const fc::variant& var, fc::crypto::signature& vo)

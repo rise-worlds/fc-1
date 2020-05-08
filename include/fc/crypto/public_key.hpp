@@ -9,7 +9,7 @@
 
 namespace fc { namespace crypto {
    namespace config {
-      constexpr const char* public_key_legacy_prefix = "EOS";
+      constexpr const char* public_key_legacy_prefix = "POC";
       constexpr const char* public_key_base_prefix = "PUB";
       constexpr const char* public_key_prefix[] = {
          "K1",
@@ -40,7 +40,7 @@ namespace fc { namespace crypto {
 
          // serialize to/from string
          explicit public_key(const string& base58str);
-         explicit operator string() const;
+         std::string to_string(const fc::yield_function_t& yield = fc::yield_function_t()) const;
 
          storage_type _storage;
 
@@ -56,7 +56,7 @@ namespace fc { namespace crypto {
 } }  // fc::crypto
 
 namespace fc {
-   void to_variant(const crypto::public_key& var,  variant& vo);
+   void to_variant(const crypto::public_key& var, variant& vo, const fc::yield_function_t& yield = fc::yield_function_t());
 
    void from_variant(const variant& var, crypto::public_key& vo);
 } // namespace fc

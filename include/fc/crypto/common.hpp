@@ -87,6 +87,8 @@ namespace fc { namespace crypto {
 
    template<typename Storage, const char * const * Prefixes, int DefaultPosition = -1>
    struct base58str_visitor : public fc::visitor<std::string> {
+      explicit base58str_visitor( const fc::yield_function_t& yield )
+      : _yield(yield) {};
       template< typename KeyType >
       std::string operator()( const KeyType& key ) const {
          using data_type = typename KeyType::data_type;
@@ -95,15 +97,21 @@ namespace fc { namespace crypto {
 
          checksummed_data<data_type> wrapper;
          wrapper.data = key.serialize();
+         _yield();
          wrapper.check = checksummed_data<data_type>::calculate_checksum(wrapper.data, !is_default ? Prefixes[position] : nullptr);
+         _yield();
          auto packed = raw::pack( wrapper );
-         auto data_str = to_base58( packed.data(), packed.size() );
+         _yield();
+         auto data_str = to_base58( packed.data(), packed.size(), _yield );
+         _yield();
          if (!is_default) {
             data_str = string(Prefixes[position]) + "_" + data_str;
          }
+         _yield();
 
          return data_str;
       }
+      const fc::yield_function_t _yield;
    };
 
    template<typename T>

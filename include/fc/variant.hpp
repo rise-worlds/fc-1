@@ -12,6 +12,7 @@
 
 #include <fc/optional.hpp>
 #include <fc/string.hpp>
+#include <fc/time.hpp>
 #include <fc/container/deque_fwd.hpp>
 #include <fc/container/flat_fwd.hpp>
 #include <fc/smart_ref_fwd.hpp>
@@ -248,6 +249,7 @@ namespace fc
               virtual void handle( const string& v )const        = 0;
               virtual void handle( const variant_object& v)const = 0;
               virtual void handle( const variants& v)const       = 0;
+              virtual void handle( const blob& v)const           = 0;
         };
 
         void  visit( const visitor& v )const;
@@ -353,6 +355,8 @@ namespace fc
         template<typename T>
         explicit variant( const T& val );
 
+        template<typename T>
+        explicit variant( const T& val, const fc::yield_function_t& yield );
 
         void    clear();
       private:
@@ -588,6 +592,14 @@ namespace fc
       memset( this, 0, sizeof(*this) );
       to_variant( val, *this );
    }
+
+   template<typename T>
+   variant::variant( const T& val, const fc::yield_function_t& yield )
+   {
+      memset( this, 0, sizeof(*this) );
+      to_variant( val, *this, yield );
+   }
+
    #ifdef __APPLE__
    inline void to_variant( size_t s, variant& v ) { v = variant(uint64_t(s)); }
    #endif
