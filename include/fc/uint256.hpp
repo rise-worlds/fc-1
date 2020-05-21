@@ -95,6 +95,8 @@ namespace fc
       friend bool    operator <=  ( const uint256& l, const uint64_t& r ) { return l <= uint256(r); }
       friend bool    operator <=  ( const uint64_t& l, const uint256& r ) { return uint256(l) <= r; }
 
+      friend std::ostream& operator<<(std::ostream& o, const uint256& v) { o << v.operator fc::string(); return o;}
+
       friend std::size_t hash_value( const uint256& v ) { return city_hash_size_t((const char*)&v, sizeof(v)); }
 
       uint32_t to_integer()const
@@ -175,15 +177,29 @@ namespace std
    class numeric_limits<fc::uint256>
    {
    public:
+      static constexpr bool is_bounded = false;
+      static constexpr bool is_exact = false;
+      static constexpr bool is_iec559 = false;
       static constexpr bool is_integer = false;
+      static constexpr bool is_modulo = false;
+      static constexpr bool is_signed = false;
+      static constexpr bool is_specialized = false;
+      static constexpr bool traps = false;
       static constexpr fc::uint256 min() noexcept { return fc::uint256::min(); }
       static constexpr fc::uint256 max() noexcept { return fc::uint256::max(); }
       static constexpr fc::uint256 lowest() noexcept { return fc::uint256::min(); }
 
-      static constexpr int  min_exponent = 0;
-      static constexpr int  min_exponent10 = 0;
-      static constexpr int  max_exponent = 0;
-      static constexpr int  max_exponent10 = 0;
+      static constexpr int digits = 0;
+      static constexpr int digits10 = 0;
+      static constexpr int min_digits = 0;
+      static constexpr int min_digits10 = 0;
+      static constexpr int max_digits = 0;
+      static constexpr int max_digits10 = 0;
+      static constexpr int radix = 0;
+      static constexpr int min_exponent = 0;
+      static constexpr int min_exponent10 = 0;
+      static constexpr int max_exponent = 0;
+      static constexpr int max_exponent10 = 0;
    };
 }
 
