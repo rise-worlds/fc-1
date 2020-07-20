@@ -109,7 +109,7 @@ namespace fc
       uint64_t to_uint64()const
       {
          FC_ASSERT( hi == 0 );
-         uint32_t lo64 = (uint32_t) lo & 0xFFFFFFFFFFFFFFFFULL;
+         uint32_t lo64 = (uint64_t) lo & 0xFFFFFFFFFFFFFFFFULL;
          FC_ASSERT( lo == lo64 );
          return lo64;
       }
