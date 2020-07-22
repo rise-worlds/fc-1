@@ -12,6 +12,11 @@
   #pragma warning (disable : 4244)
 #endif //// _MSC_VER
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-inline"
+#endif ///__clang__
+
 namespace fc
 {
    class bigint;
@@ -30,6 +35,7 @@ namespace fc
       constexpr uint256( uint64_t l ):lo(l),hi(0){}
       constexpr uint256( __uint128_t l ):lo(l),hi(0){}
       constexpr uint256( __uint128_t _h, __uint128_t _l ):lo(_l),hi(_h){}
+      constexpr uint256( uint256& i ):lo( i.lo ), hi(i.hi){ }
       constexpr uint256( const uint256& i ):lo( i.lo ), hi(i.hi){ }
       uint256( const std::string& s );
 
@@ -38,8 +44,9 @@ namespace fc
       bool     operator == ( const uint256& o )const{ return hi == o.hi && lo == o.lo;             }
       bool     operator != ( const uint256& o )const{ return hi != o.hi || lo != o.lo;             }
       bool     operator < ( const uint256& o )const { return (hi == o.hi) ? lo < o.lo : hi < o.hi; }
-      bool     operator < ( const __uint128_t& o )const { return *this < uint256(o); }
-      bool     operator < ( const int64_t& o )const { return *this < uint256(o); }
+      bool     operator < ( const __uint128_t& o )const { return *this < uint256(o);               }
+      bool     operator < ( const int64_t& o )const { return *this < uint256(o);                   }
+      bool     operator < ( const uint64_t& o )const { return *this < uint256(o);                  }
       bool     operator !()const                    { return !(hi !=0 || lo != 0);                 }
       uint256  operator -()const                    { return ++uint256( ~hi, ~lo );                }
       uint256  operator ~()const                    { return uint256( ~hi, ~lo );                  }
@@ -79,6 +86,8 @@ namespace fc
       friend bool    operator >  ( const uint128& l, const uint256& r )  { return r < uint256(l);           }
       friend bool    operator >  ( const uint256& l, const int64_t& r )  { return uint256(r) < l;           }
       friend bool    operator >  ( const int64_t& l, const uint256& r )  { return r < uint256(l);           }
+      friend bool    operator >  ( const uint256& l, const uint64_t& r ) { return uint256(r) < l;           }
+      friend bool    operator >  ( const uint64_t& l, const uint256& r ) { return r < uint256(l);           }
 
       friend bool    operator >=  ( const uint256& l, const uint256& r ) { return l == r || l > r; }
       friend bool    operator >=  ( const uint256& l, const __uint128_t& r ) { return l >= uint256(r); }
@@ -204,6 +213,10 @@ namespace std
 }
 
 FC_REFLECT( fc::uint256, (lo)(hi) )
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif ///__clang__
 
 #ifdef _MSC_VER
 #pragma warning (pop)
